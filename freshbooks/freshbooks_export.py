@@ -5,7 +5,7 @@ Created on Feb 29, 2012
 
 Requires : pip install refreshbooks
            pip install requests
-           pip install gitpythonx`
+           pip install gitpython
 '''
 
 from refreshbooks import api
@@ -24,7 +24,8 @@ os.getlogin = lambda: pwd.getpwuid(os.getuid())[0]
 INIFILE = 'freshbooks_export.ini'
 
 def main():
-    config = ConfigParser.RawConfigParser({'domain' : 'example.freshbooks.com', 'apitoken' : 'put your api token here'})
+    config = ConfigParser.RawConfigParser({'domain' : 'example.freshbooks.com', 
+                                           'apitoken' : 'put your api token here'})
     if os.path.exists(INIFILE):
         config.read(INIFILE)
     else:
