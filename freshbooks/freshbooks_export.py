@@ -78,14 +78,17 @@ def process(obj, childname, grandchildname):
     while page:
         print "fetching page %s of %s" % (page, childname)
         response = obj.list(per_page = per_page, page = page)
-        subresponses = getattr(response[childname], grandchildname)
-        retval += objectify.dump(response)
-        retval += '\n'
-        print "exported %s records from %s" % (len(subresponses), childname)
-        if len(subresponses) < per_page:
-            page = False
+        if hasattr(response[childname], grandchildname):
+            subresponses = getattr(response[childname], grandchildname)
+            retval += objectify.dump(response)
+            retval += '\n'
+            print "exported %s records from %s" % (len(subresponses), childname)
+            if len(subresponses) < per_page:
+                page = False
+            else:
+                page += 1
         else:
-            page += 1
+            page = False
     return retval
 
 if __name__ == "__main__":
