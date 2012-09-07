@@ -3,7 +3,7 @@
 # Requires : md5sum tr awk bc
 
 # Deployment method :
-# wget ~/bin/setprompt http://github.com/foo && install -D -m 755 setprompt ~/bin/setprompt && rm setprompt
+# wget https://raw.github.com/gene1wood/tools/master/shell/setprompt && install -D -m 755 setprompt ~/bin/setprompt && rm setprompt && if ! grep '. ~/bin/setprompt' ~/.bashrc; then echo ". ~/bin/setprompt" >> ~/.bashrc; fi
 
 # This is a list of colors that are readable and look nice
 # Feel free to re-order them to pin certain hosts to certain colors
