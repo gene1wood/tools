@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# Requires : md5sum tr awk bc
+
+# Deployment method :
+# wget ~/bin/setprompt http://github.com/foo && install -D -m 755 setprompt ~/bin/setprompt && rm setprompt
+
+# This is a list of colors that are readable and look nice
+# Feel free to re-order them to pin certain hosts to certain colors
+colorlist="0;30;41
+0;30;42
+0;30;43
+0;30;44
+0;30;45
+0;30;46
+0;30;47
+0;31;43
+0;31;47
+0;32
+0;32;40
+0;32;43
+0;32;44
+0;32;45
+0;32;47
+0;33
+0;33;40
+0;33;41
+0;33;42
+0;33;44
+0;33;45
+0;33;46
+0;33;47
+0;34
+0;34;40
+0;34;41
+0;34;42
+0;34;43
+0;34;46
+0;34;47
+0;35
+0;35;40
+0;35;41
+0;35;42
+0;35;43
+1;32
+0;35;47
+0;36
+0;36;40
+0;36;43
+0;36;44
+0;36;47
+0;37
+0;37;40
+0;37;41
+0;37;42
+0;37;43
+0;37;44
+0;37;45
+0;37;46
+1;30
+1;30;40
+1;30;42
+1;30;43
+1;30;46
+1;30;47
+1;31
+1;31;40
+1;31;47
+1;32;40
+1;32;41
+1;32;42
+1;32;44
+1;32;45
+1;32;46
+1;33
+1;33;40
+1;33;41
+1;33;42
+1;33;43
+1;33;44
+1;33;45
+1;33;46
+1;34
+1;34;40
+1;34;44
+1;34;45
+1;34;47
+1;35
+1;35;40
+1;35;44
+1;35;45
+1;35;46
+1;35;47
+1;36
+1;36;40
+1;36;42
+1;36;44
+1;36;45
+1;36;46
+1;36;47
+1;37
+1;37;40
+1;37;41
+1;37;42
+1;37;43
+1;37;44
+1;37;45
+1;37;46"
+
+colormap=($colorlist) 
+max=${#colormap[@]}
+val="`hostname -f`"
+num="`echo $val | md5sum - | tr '[a-f]' '[A-F]' | awk '{print $1}'`"
+maxnum="`echo \"ibase=16; FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\" | bc`"
+hash="`echo \"ibase=16; $num\" | bc`"
+index="`echo \"scale=0;$hash*$max/$maxnum\" |bc`"
+usercolor="\[\033[${colormap[$index]}m\]"
+nocolor="\[\033[m\]"
+pathcolor="\[\033[1;34m\]"
+
+PS1="${debian_chroot:+($debian_chroot)}${usercolor}\u@\h${nocolor}:${pathcolor}\w${nocolor}\$ "
+
+# Prepend with date and time
+PS1="\d \t $PS1"
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+#echo "index for `hostname -f` is $index"
