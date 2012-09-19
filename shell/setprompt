@@ -109,7 +109,7 @@ colorlist="0;30;41
 
 colormap=($colorlist) 
 max=${#colormap[@]}
-val="`hostname -f`"
+val="`/sbin/ifconfig | grep HWaddr | awk '{print $5}'`"
 num="`echo $val | md5sum - | tr '[a-f]' '[A-F]' | awk '{print $1}'`"
 maxnum="`echo \"ibase=16; FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\" | bc`"
 hash="`echo \"ibase=16; $num\" | bc`"
