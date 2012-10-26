@@ -28,7 +28,7 @@ echo "$sudoersdest" && cat $sudoersdest
 # Virtualbox Guest Additions
 # http://wiki.centos.org/HowTos/Virtualization/VirtualBox/CentOSguest
 # Enable EPEL
-yum install http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
+yum install -y http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
 buildtools="gcc make perl kernel-devel-`uname -r`"
 yum install -y dkms $buildtools
 mkdir /media/cdrom
@@ -71,5 +71,10 @@ curl -L https://www.opscode.com/chef/install.sh | bash
 chef-client -v
 
 # compact
-dd if=/dev/zero of=test.file; rm test.file
-
+#yum clean all
+#rm -r "$(gem env gemdir)"/doc/*
+if [ "$1" == "compact" ]; then
+  echo "Starting process of clearing empty space in prep for compacting"
+  dd if=/dev/zero of=test.file; rm test.file
+  echo "Empty space cleared"
+fi
