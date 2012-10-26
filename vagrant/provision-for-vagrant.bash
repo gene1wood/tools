@@ -14,18 +14,21 @@ id vagrant
 # sudoers
 if [ -d /etc/sudoers.d ]; then
   sudoersdest=/etc/sudoers.d/vagrant
+  touch $sudoersdest
+  chmod 0440 $sudoersdest
 else
   sudoersdest=/etc/sudoers
 fi
 echo "%admin ALL=NOPASSWD: ALL" >> $sudoersdest
 echo "Defaults    env_keep+=SSH_AUTH_SOCK" >> $sudoersdest
+
 sed -i -e 's/^\(Defaults[ \t]*requiretty\)/#\1/g' /etc/sudoers
 echo "$sudoersdest" && cat $sudoersdest
 
 # Virtualbox Guest Additions
 # http://wiki.centos.org/HowTos/Virtualization/VirtualBox/CentOSguest
 # Enable EPEL
-rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
+yum install http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
 buildtools="gcc make perl kernel-devel-`uname -r`"
 yum install -y dkms $buildtools
 mkdir /media/cdrom
@@ -60,9 +63,13 @@ fi
 echo "/etc/ssh/sshd_config" && cat /etc/ssh/sshd_config
 
 # speedup boot
-sed -i -e 's/timeout=.*/timeout=1/g' /boot/grub/menu.lst
-echo "/boot/grub/menu.lst" && cat /boot/grub/menu.lst
+sed -i -e 's/timeout=.*/timeout=1/g' /boot/grub/grub.conf
+echo "/boot/grub/menu.lst" && cat /boot/grub/grub.conf
 
 # chef
 curl -L https://www.opscode.com/chef/install.sh | bash
 chef-client -v
+
+# compact
+dd if=/dev/zero of=test.file; rm test.file
+
