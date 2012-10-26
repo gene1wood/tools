@@ -12,10 +12,15 @@ usermod -p $(echo "vagrant" | openssl passwd -1 -stdin) vagrant
 id vagrant
 
 # sudoers
-echo "%admin ALL=NOPASSWD: ALL" >> /etc/sudoers
-echo "Defaults    env_keep+=SSH_AUTH_SOCK" >> /etc/sudoers
+if [ -d /etc/sudoers.d ]; then
+  sudoersdest=/etc/sudoers.d/vagrant
+else
+  sudoersdest=/etc/sudoers
+fi
+echo "%admin ALL=NOPASSWD: ALL" >> $sudoersdest
+echo "Defaults    env_keep+=SSH_AUTH_SOCK" >> $sudoersdest
 sed -i -e 's/^\(Defaults[ \t]*requiretty\)/#\1/g' /etc/sudoers
-echo "/etc/sudoers" && cat /etc/sudoers
+echo "$sudoersdest" && cat $sudoersdest
 
 # Virtualbox Guest Additions
 # http://wiki.centos.org/HowTos/Virtualization/VirtualBox/CentOSguest
@@ -39,14 +44,19 @@ echo "/etc/sysconfig/network" && cat /etc/sysconfig/network
 
 # Vagrant requirements
 yum install -y openssh-clients wget
-wget -O /tmp/vagrant.pub /tmp/ https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
+wget -O /tmp/vagrant.pub https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
 install -d -g vagrant -o vagrant -m 0700 /home/vagrant/.ssh
 install -D -g vagrant -o vagrant -m 0600 /tmp/vagrant.pub /home/vagrant/.ssh/authorized_keys
 rm /tmp/vagrant.pub
 ls -al /home/vagrant/.ssh
 
 # Disable ssh dns lookups
-if grep "^UseDNS[ \t]*yes" /etc/ssh/sshd_config; then sed -i -e 's/^\(UseDNS[ \t]*\)yes/\1no/g' /etc/ssh/sshd_config; else echo "UseDNS no" >> /etc/ssh/sshd_config
+if grep "^UseDNS[ \t]*yes" /etc/ssh/sshd_config; then
+  sed -i -e 's/^\(UseDNS[ \t]*\)yes/\1no/g' /etc/ssh/sshd_config
+else
+  echo "UseDNS no" >> /etc/ssh/sshd_config
+fi
+
 echo "/etc/ssh/sshd_config" && cat /etc/ssh/sshd_config
 
 # speedup boot
