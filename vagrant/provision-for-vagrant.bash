@@ -1,7 +1,7 @@
 #!/bin/bash -x
 # To install run curl -L http://bit.ly/TZLYrX | bash
 #
-# These choices are based off of these instructions : # vagrantup.com/v1/docs/base_boxes.html
+# These choices are based off of these instructions : # http://vagrantup.com/v1/docs/base_boxes.html
 
 rpm -q redhat-release oracle-release centos-release sl-release &>/dev/null; if [ $? -ge 4 ]; then echo "This is not a Redhat based system. Aborting"; exit 1; fi
 
