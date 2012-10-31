@@ -3,7 +3,7 @@
 # Requires : md5sum tr awk bc
 
 # Deployment method :
-# wget https://raw.github.com/gene1wood/tools/master/shell/setprompt && install -D -m 755 setprompt ~/bin/setprompt && rm setprompt && if ! grep '. ~/bin/setprompt' ~/.bashrc; then echo ". ~/bin/setprompt" >> ~/.bashrc; fi
+# curl -L "http://git.io/_8cTOQ" | bash
 
 # This is a list of colors that are readable and look nice
 # Feel free to re-order them to pin certain hosts to certain colors
@@ -109,7 +109,8 @@ colorlist="0;30;41
 
 colormap=($colorlist) 
 max=${#colormap[@]}
-val="`/sbin/ifconfig | grep HWaddr | awk '{print $5}'`"
+default_interface="`route -n | awk '$1 == "0.0.0.0" {print $8}'`"
+val="`/sbin/ifconfig $default_interface | grep HWaddr | awk '{print $5}'`"
 num="`echo $val | md5sum - | tr '[a-f]' '[A-F]' | awk '{print $1}'`"
 maxnum="`echo \"ibase=16; FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\" | bc`"
 hash="`echo \"ibase=16; $num\" | bc`"
@@ -118,10 +119,14 @@ usercolor="\[\033[${colormap[$index]}m\]"
 nocolor="\[\033[m\]"
 pathcolor="\[\033[1;34m\]"
 
+success="\[\033[32;1m\]✔${nocolor}"
+failure="\[\033[31;1m\]✘${nocolor}"
+errorcode="if [ \$? = 0 ]; then echo \"${success}\"; else echo \"${failure}\"; fi"
+
 PS1="${debian_chroot:+($debian_chroot)}${usercolor}\u@\h${nocolor}:${pathcolor}\w${nocolor}\$ "
 
 # Prepend with date and time
-PS1="\d \t $PS1"
+PS1="\D{%Y-%m-%d %H:%M:%S} \`${errorcode}\` ${PS1}"
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -133,3 +138,23 @@ xterm*|rxvt*)
 esac
 
 #echo "index for `hostname -f` is $index"
+
+# Colorise less
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# http://blog.sanctum.geek.nz/better-bash-history/
+shopt -s histappend
+HISTFILESIZE=1000000
+HISTSIZE=1000000
+HISTTIMEFORMAT='%F %T '
+PROMPT_COMMAND='history -a'
+shopt -s cmdhist
+
+# fix spelling errors for cd, only in interactive shell
+shopt -s cdspell
