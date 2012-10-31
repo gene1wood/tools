@@ -109,7 +109,7 @@ colorlist="0;30;41
 
 colormap=($colorlist) 
 max=${#colormap[@]}
-default_interface="`route -n | awk '$1 == "0.0.0.0" {print $8}'`"
+default_interface="`/sbin/route -n | awk '$1 == "0.0.0.0" {print $8}'`"
 val="`/sbin/ifconfig $default_interface | grep HWaddr | awk '{print $5}'`"
 num="`echo $val | md5sum - | tr '[a-f]' '[A-F]' | awk '{print $1}'`"
 maxnum="`echo \"ibase=16; FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\" | bc`"
