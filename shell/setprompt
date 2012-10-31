@@ -123,19 +123,20 @@ success="\[\033[32;1m\]✔${nocolor}"
 failure="\[\033[31;1m\]✘${nocolor}"
 errorcode="if [ \$? = 0 ]; then echo \"${success}\"; else echo \"${failure}\"; fi"
 
-PS1="${debian_chroot:+($debian_chroot)}${usercolor}\u@\h${nocolor}:${pathcolor}\w${nocolor}\$ "
-
-# Prepend with date and time
-PS1="\D{%Y-%m-%d %H:%M:%S} \`${errorcode}\` ${PS1}"
-
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    TITLE_BAR="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]"
     ;;
 *)
     ;;
 esac
+
+DATE_ERRORCODE="\D{%Y-%m-%d %H:%M:%S} \`${errorcode}\`"
+CHROOT="${debian_chroot:+($debian_chroot)}"
+USER_AT_HOST="${usercolor}\u@\h${nocolor}"
+PATH_STR="${pathcolor}\w${nocolor}"
+PS1="${TITLE_BAR}${DATE_ERRORCODE} ${CHROOT}${USER_AT_HOST}:${PATH_STR}\\$ "
 
 #echo "index for `hostname -f` is $index"
 
