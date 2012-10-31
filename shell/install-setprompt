@@ -1,0 +1,7 @@
+#!/bin/bash
+wget -O /tmp/setprompt https://raw.github.com/gene1wood/tools/master/shell/setprompt
+install -D -m 755 /tmp/setprompt ~/bin/setprompt
+rm /tmp/setprompt
+if ! grep '. ~/bin/setprompt' ~/.bashrc; then 
+  echo ". ~/bin/setprompt" >> ~/.bashrc
+fi
