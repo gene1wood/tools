@@ -17,9 +17,10 @@ import requests.auth
 import xml.etree.ElementTree
 import tempfile
 import pprint
+import sys
 
-username=Admin
-password=admin
+username='Admin'
+password='admin'
 xwikiurl='http://example.com/xwiki'
 
 def create_pages(filelist, username, password):
@@ -79,7 +80,7 @@ elif sys.argv[1] == 'create':
   output = create_pages(filelist, username, password)
 elif sys.argv[1] == 'delete':
   output = delete_pages(filelist, username, password)
-else
+else:
   print "Usage : %s [create|delete]" % sys.argv[0]
   exit(1)
   
