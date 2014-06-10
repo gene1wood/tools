@@ -49,7 +49,7 @@ def main():
     elif args.yaml:
         output = yaml.dump(output)
 
-    return output
+    print output,
 
 if __name__ == '__main__':
-    print main(),
+    main()
